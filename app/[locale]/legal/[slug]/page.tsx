@@ -16,6 +16,41 @@ type LegalPageProperties = {
   }>;
 };
 
+// Define the structure of the image
+interface ImageData {
+  url: string;
+  width: number;
+  height: number;
+  alt?: string;
+}
+
+// Define the structure of the body
+interface BodyData {
+  json: {
+    content: any; // Adjust this type if you know the exact structure
+    toc: any; // Adjust this type if you know the exact structure
+  };
+  readingTime: number;
+}
+
+// Define the structure of the post
+interface Post {
+  _slug: string;
+  _title: string;
+  description: string;
+  date: string;
+  image: ImageData;
+  body: BodyData;
+  authors: Array<{ _title: string }>;
+}
+
+// Define the structure of the data returned by legal.postQuery
+interface LegalData {
+  legalPages: {
+    item: Post | null;
+  };
+}
+
 export const generateMetadata = async ({
   params,
 }: LegalPageProperties): Promise<Metadata> => {
@@ -44,7 +79,7 @@ const LegalPage = async ({ params }: LegalPageProperties) => {
   return (
     <Feed queries={[legal.postQuery(slug)]}>
       {/* biome-ignore lint/suspicious/useAwait: "Server Actions must be async" */}
-      {async ([data]) => {
+      {async ([data] : [LegalData]) => {
         'use server';
 
         const page = data.legalPages.item;

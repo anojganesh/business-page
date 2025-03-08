@@ -16,6 +16,42 @@ type HomeProps = {
   }>;
 };
 
+interface ImageData {
+  url: string;
+  width: number;
+  height: number;
+  alt?: string;
+}
+
+// Define the structure of the body
+interface BodyData {
+  json: {
+    content: any; // Adjust this type if you know the exact structure
+    toc: any; // Adjust this type if you know the exact structure
+  };
+  readingTime: number;
+}
+
+// Define the structure of the post
+interface Post {
+  _slug: string;
+  _title: string;
+  description: string;
+  date: string;
+  image: ImageData;
+  body: BodyData;
+  authors: Array<{ _title: string }>;
+}
+
+// Define the structure of the data returned by blog.postsQuery
+interface BlogData {
+  blog: {
+    posts: {
+      items: Post[];
+    };
+  };
+}
+
 export const generateMetadata = async ({
   params,
 }: HomeProps): Promise<Metadata> => {

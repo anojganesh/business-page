@@ -10,6 +10,19 @@ type HeroProps = {
   dictionary: Dictionary;
 };
 
+interface Post {
+  _slug: string;
+  // other properties...
+}
+
+interface BlogData {
+  blog: {
+    posts: {
+      item: Post | null;
+    };
+  };
+}
+
 export const Hero = async ({ dictionary }: HeroProps) => (
   <div className="w-full">
     <div className="container mx-auto">
@@ -17,7 +30,7 @@ export const Hero = async ({ dictionary }: HeroProps) => (
         <div>
           <Feed queries={[blog.latestPostQuery]}>
             {/* biome-ignore lint/suspicious/useAwait: "Server Actions must be async" */}
-            {async ([data]) => {
+            {async ([data]: [BlogData]) => {
               'use server';
 
               return (

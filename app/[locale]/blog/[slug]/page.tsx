@@ -14,6 +14,42 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Balancer from 'react-wrap-balancer';
 
+interface ImageData {
+  url: string;
+  width: number;
+  height: number;
+  alt?: string;
+}
+
+// Define the structure of the body
+interface BodyData {
+  json: {
+    content: any; // Adjust this type if you know the exact structure
+    toc: any; // Adjust this type if you know the exact structure
+  };
+  readingTime: number;
+}
+
+// Define the structure of the post
+interface Post {
+  _slug: string;
+  _title: string;
+  description: string;
+  date: string;
+  image: ImageData;
+  body: BodyData;
+  authors: Array<{ _title: string }>;
+}
+
+// Define the structure of the data returned by blog.postQuery
+interface BlogData {
+  blog: {
+    posts: {
+      item: Post | null;
+    };
+  };
+}
+
 const protocol = env.VERCEL_PROJECT_PRODUCTION_URL?.startsWith('https')
   ? 'https'
   : 'http';
@@ -42,6 +78,7 @@ export const generateMetadata = async ({
   });
 };
 
+
 export const generateStaticParams = async (): Promise<{ slug: string }[]> => {
   const posts = await blog.getPosts();
 
@@ -50,11 +87,10 @@ export const generateStaticParams = async (): Promise<{ slug: string }[]> => {
 
 const BlogPost = async ({ params }: BlogPostProperties) => {
   const { slug } = await params;
-
-  return (
+   return (
     <Feed queries={[blog.postQuery(slug)]}>
       {/* biome-ignore lint/suspicious/useAwait: "Server Actions must be async" */}
-      {async ([data]) => {
+      {async ([data] : [BlogData]) => {
         'use server';
 
         const page = data.blog.posts.item;
@@ -139,7 +175,7 @@ const BlogPost = async ({ params }: BlogPostProperties) => {
         );
       }}
     </Feed>
-  );
+  ); 
 };
 
 export default BlogPost;
